@@ -41,11 +41,13 @@ public class UserController {
 					@Content(schema = @Schema(implementation = ErrorStructure.class))
 			})
 	})
+//	@PreAuthorize("hasAuthority('WRITE')")
 	@PostMapping("/users/register")
 	public ResponseEntity<ResponseStructure<UserResponse>> userRegistration(@RequestBody @Valid UserRequest user){
 		return userService.userRegistration(user);
 	}
 	
+//	@PreAuthorize("hasAuthority('WRITE')")
 	@DeleteMapping("/users/{userId}")
 	private ResponseEntity<ResponseStructure<UserResponse>> userDeletion(@PathVariable Integer userId){
 		return userService.softUserDeletion(userId);
@@ -57,6 +59,7 @@ public class UserController {
 					@Content(schema = @Schema(implementation = ErrorStructure.class))
 			})
 	})
+//	@PreAuthorize("hasAuthority('READ')")
 	@GetMapping("/users/{userId}")
 	public ResponseEntity<ResponseStructure<UserResponse>> findByUserId(@PathVariable Integer userId){
 		return userService.findByUserId(userId);
