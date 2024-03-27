@@ -16,6 +16,7 @@ public class UserResponse {
 	private int userId;
 	private String username;
 	private String email;
+	private boolean deleted;
 	
 	@CreatedDate
 	private LocalDateTime createdAt;
