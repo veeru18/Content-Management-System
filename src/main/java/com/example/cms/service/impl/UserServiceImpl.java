@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponse>> userDeletion(Integer userId) {
+	public ResponseEntity<ResponseStructure<UserResponse>> softUserDeletion(Integer userId) {
 		return userRepository.findById(userId).map(prevUser->{
 			UserResponse upUser = mapToUserResponse(updateRegistration(prevUser));
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
@@ -71,18 +71,24 @@ public class UserServiceImpl implements UserService {
 		user.setDeleted(true);
 		return userRepository.save(user);
 	}
-	
-//	Optional<User> byId = userRepository.findById(userId);
-//	if(byId.isPresent()) {
-//		User user = byId.get();
-//		user.setDeleted(true);
-//		User updatedUser = userRepository.save(user);
-//		UserResponse toUserResponse = mapToUserResponse(updatedUser);
-//		return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
-//											.setData(toUserResponse)
-//											.setMessage("User Delete attribute updated"));
-//	}else {
-//		throw new UserNotFoundException("User with the Specified ID is not found");
-//	}	
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> findByUserId(Integer userId) {
+		return userRepository.findById(userId).map(user->
+					ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
+							.setMessage("User found success").setData(mapToUserResponse(user))))
+				.orElseThrow(()-> new UserNotFoundException("User with the Specified ID is not found"));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> updateDeletedByUserId(Integer userId) {
+		return userRepository.findById(userId).map(prevUser->{
+			prevUser.setDeleted(false);
+			UserResponse upResUser = mapToUserResponse(userRepository.save(prevUser));
+			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
+					.setData(upResUser)
+					.setMessage("User_deleted attribute updated to false"));
+		}).orElseThrow(()-> new UserNotFoundException("User with the Specified ID is not found"));
+	}
 	
 }

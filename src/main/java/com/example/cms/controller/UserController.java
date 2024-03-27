@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,6 +48,21 @@ public class UserController {
 	
 	@DeleteMapping("/users/{userId}")
 	private ResponseEntity<ResponseStructure<UserResponse>> userDeletion(@PathVariable Integer userId){
-		return userService.userDeletion(userId);
+		return userService.softUserDeletion(userId);
+	}
+	
+	@Operation(description = "User is being fetched",responses = {
+			@ApiResponse(responseCode = "200",description = "User Found Successfully"),
+			@ApiResponse(responseCode = "400",description = "Invalid Inputs",content = {
+					@Content(schema = @Schema(implementation = ErrorStructure.class))
+			})
+	})
+	@GetMapping("/users/{userId}")
+	public ResponseEntity<ResponseStructure<UserResponse>> findByUserId(@PathVariable Integer userId){
+		return userService.findByUserId(userId);
+	}
+	@PutMapping("/users/{userId}")
+	public ResponseEntity<ResponseStructure<UserResponse>> updateDeletedByUserId(@PathVariable Integer userId){
+		return userService.updateDeletedByUserId(userId);
 	}
 }
