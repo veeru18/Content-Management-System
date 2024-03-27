@@ -15,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.example.cms.exceptions.UserEmailAlreadyExistsException;
+import com.example.cms.exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -48,6 +49,11 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException ex){
 		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User Email Alread exists! please enter a Valid Email ID");
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handleUserNotFoundException(UserNotFoundException ex){
+		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User not found, please check the database");
 	}
 }
 //@RestControllerAdvice

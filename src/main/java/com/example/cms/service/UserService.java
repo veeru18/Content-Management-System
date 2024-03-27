@@ -10,4 +10,5 @@ import com.example.cms.utility.ResponseStructure;
 public interface UserService {
 	ResponseEntity<ResponseStructure<UserResponse>> userRegistration(UserRequest user);
 	ResponseEntity<ResponseStructure<String>> login(Login loginCreds);
+	ResponseEntity<ResponseStructure<UserResponse>> userDeletion(Integer userId);
 }
