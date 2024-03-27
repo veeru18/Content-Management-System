@@ -23,9 +23,11 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf->csrf.disable())
-				.authorizeHttpRequests(auth->auth.requestMatchers("/users/register")
-//				.authorizeHttpRequests(auth->auth.requestMatchers("/test","/users/register")
-												.permitAll().anyRequest().authenticated())
+				//only one HttpMethod and String[] is allowed for this overloaded method
+//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.GET,new String[] {"/users/{userId}","/"}).fullyAuthenticated())
+//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.PUT,new String[] {"/users/{userId}"}).fullyAuthenticated())
+//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.POST,"/users/register").permitAll().anyRequest().authenticated())
+				.authorizeHttpRequests(auth->auth.requestMatchers("/users/{userId}","/","/users/register").permitAll().anyRequest().authenticated())
 				.formLogin(Customizer.withDefaults()).build();
 	}
 	

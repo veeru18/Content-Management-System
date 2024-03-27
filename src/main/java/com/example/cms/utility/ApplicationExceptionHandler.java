@@ -56,25 +56,3 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User not found, please check the database");
 	}
 }
-//@RestControllerAdvice
-//public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
-//	private ErrorStructure<Map<String,String>> struct;
-//	public ApplicationExceptionHandler(ErrorStructure<Map<String,String>> struct) {
-//		this.struct = struct;
-//	}
-//
-//	@Override
-//	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-////		List<ObjectError> allErrors = ex.getAllErrors();
-//		Map<String,String> messages=new HashMap<>();
-//		ex.getAllErrors().forEach(error->messages.put(((FieldError)error).getField(),error.getDefaultMessage()));
-////		{
-////			FieldError fieldError=(FieldError)err;
-////			errors.put(((FieldError)err).getField(),err.getDefaultMessage());
-////		});
-//		return ResponseEntity.badRequest().body(struct.setRootCause(messages)
-//												.setMessage("Invalid Data Entered")
-//												.setStatuscode(HttpStatus.BAD_REQUEST.value()));
-//	}
-//}

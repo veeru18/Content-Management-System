@@ -22,4 +22,5 @@ public class UserResponse {
 	private LocalDateTime createdAt;
 	@LastModifiedDate
 	private LocalDateTime lastModifiedAt;
+
 }
