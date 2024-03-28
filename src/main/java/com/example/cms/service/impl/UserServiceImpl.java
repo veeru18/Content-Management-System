@@ -8,7 +8,6 @@ import com.example.cms.exceptions.UserEmailAlreadyExistsException;
 import com.example.cms.exceptions.UserNotFoundException;
 import com.example.cms.model.User;
 import com.example.cms.repository.UserRepository;
-import com.example.cms.requestdto.Login;
 import com.example.cms.requestdto.UserRequest;
 import com.example.cms.responsedto.UserResponse;
 import com.example.cms.service.UserService;
@@ -50,11 +49,6 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(dto.getEmail());
 		user.setDeleted(false);
 		return user;
-	}
-
-	@Override
-	public ResponseEntity<ResponseStructure<String>> login(Login loginCreds) {
-		return null;
 	}
 
 	@Override

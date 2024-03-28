@@ -24,10 +24,10 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf->csrf.disable())
 				//only one HttpMethod and String[] is allowed for this overloaded method
-//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.GET,new String[] {"/users/{userId}","/"}).fullyAuthenticated())
-//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.PUT,new String[] {"/users/{userId}"}).fullyAuthenticated())
-//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.POST,"/users/register").permitAll().anyRequest().authenticated())
-				.authorizeHttpRequests(auth->auth.requestMatchers("/users/{userId}","/","/users/register").permitAll().anyRequest().authenticated())
+//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.GET,"/users/{userId}").hasAuthority("read"))
+//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.PUT,"/users/{userId}").hasAuthority("write"))
+//				.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.POST,"/users/register").hasAuthority("write"))
+				.authorizeHttpRequests(auth->auth.requestMatchers("/users/{userId}","/","/users/register","/users/{userId}/blogs").permitAll().anyRequest().authenticated())
 				.formLogin(Customizer.withDefaults()).build();
 	}
 	

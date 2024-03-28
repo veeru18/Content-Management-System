@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.example.cms.exceptions.TopicNotSpecifiedException;
+import com.example.cms.exceptions.InvalidBlogIdException;
+import com.example.cms.exceptions.TitleNotAvailableException;
 import com.example.cms.exceptions.UserEmailAlreadyExistsException;
 import com.example.cms.exceptions.UserNotFoundException;
 
@@ -47,12 +50,27 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	}
 	
 	@ExceptionHandler
-	public ResponseEntity<ErrorStructure<String>> handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException ex){
-		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User Email Alread exists! please enter a Valid Email ID");
+	public ResponseEntity<ErrorStructure<String>> handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException ueaex){
+		return errorResponse(HttpStatus.BAD_REQUEST,ueaex.getMessage(),"User Email Alread exists! please enter a Valid Email ID");
 	}
 	
 	@ExceptionHandler
-	public ResponseEntity<ErrorStructure<String>> handleUserNotFoundException(UserNotFoundException ex){
-		return errorResponse(HttpStatus.BAD_REQUEST,ex.getMessage(),"User not found, please check the database");
+	public ResponseEntity<ErrorStructure<String>> handleUserNotFoundException(UserNotFoundException usex){
+		return errorResponse(HttpStatus.BAD_REQUEST,usex.getMessage(),"User not found, please check the database");
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handleTopicNotSpecifiedException(TopicNotSpecifiedException topnex){
+		return errorResponse(HttpStatus.BAD_REQUEST,topnex.getMessage(),"Topics or about not specified, please specify");
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handleTitleNotAvailableException(TitleNotAvailableException tnaex){
+		return errorResponse(HttpStatus.BAD_REQUEST,tnaex.getMessage(),"Blog Title already exists, enter a valid title");
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handleInvalidBlogIdException(InvalidBlogIdException ibex){
+		return errorResponse(HttpStatus.NOT_FOUND,ibex.getMessage(),"Blog doesn't exist of specified ID, enter a valid id");
 	}
 }
