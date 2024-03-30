@@ -23,4 +23,8 @@ public class ContributionPanelController {
 		return panelService.addUserToPanel(userId, panelId);
 	}
 	
+	@DeleteMapping("/users/{userId}/contribution-panels/{panelId}")
+	public ResponseEntity<ResponseStructure<ContributionPanel>> removeUserFromPanel(@PathVariable int userId,@PathVariable int panelId) {
+		return panelService.removeUserFromPanel(userId, panelId);
+	}
 }

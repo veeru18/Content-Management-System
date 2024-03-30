@@ -39,8 +39,12 @@ public class ContributionPanelServiceImpl implements ContributionPanelSevice{
 				return userRepo.findById(userId).map(contributor->{
 					if(contributor.getUserId()==owner.getUserId()) 
 						throw new IllegalArgumentException("Failed to add contributor since owner and contributor are same");
-					panel.getContributors().add(contributor);
-					ContributionPanel uniquePanel = panelRepo.save(panel);
+					ContributionPanel uniquePanel=null;
+					if(!panel.getContributors().contains(contributor)) {
+						panel.getContributors().add(contributor);
+						uniquePanel = panelRepo.save(panel);
+					}
+					else uniquePanel=panel;
 					return ResponseEntity.ok(struct.setStatusCode(HttpStatus.OK.value())
 												.setMessage("Contributor added successfully")
 												.setData(uniquePanel));
@@ -61,8 +65,12 @@ public class ContributionPanelServiceImpl implements ContributionPanelSevice{
 				return userRepo.findById(userId).map(contributor->{
 					if(contributor.getUserId()==owner.getUserId()) 
 						throw new IllegalArgumentException("Failed to add contributor since owner and contributor are same");
-					panel.getContributors().remove(contributor);
-					ContributionPanel uniquePanel = panelRepo.save(panel);
+					ContributionPanel uniquePanel=null;
+					if(panel.getContributors().contains(contributor)) {
+						panel.getContributors().remove(contributor);
+						uniquePanel = panelRepo.save(panel);
+					}
+					else uniquePanel=panel;
 					return ResponseEntity.ok(struct.setStatusCode(HttpStatus.OK.value())
 												.setMessage("Contributor deleted successfully")
 												.setData(uniquePanel));
