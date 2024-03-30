@@ -8,7 +8,7 @@ import com.example.cms.utility.ResponseStructure;
 
 public interface BlogService {
 
-	ResponseEntity<ResponseStructure<BlogResponse>> saveBlog(int userId,BlogRequest blog);
+	ResponseEntity<ResponseStructure<BlogResponse>> createBlog(int userId,BlogRequest blog);
 	ResponseEntity<Boolean> checkBlogTitleAvailability(String title);
 	ResponseEntity<ResponseStructure<BlogResponse>> findByBlogId(int blogId);
 	ResponseEntity<ResponseStructure<BlogResponse>> updateByBlogId(int blogId,BlogRequest blog);

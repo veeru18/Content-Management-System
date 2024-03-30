@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.cms.exceptions.UserEmailAlreadyExistsException;
-import com.example.cms.exceptions.UserNotFoundException;
+import com.example.cms.exceptions.UserNotFoundByIdException;
 import com.example.cms.model.User;
 import com.example.cms.repository.UserRepository;
 import com.example.cms.requestdto.UserRequest;
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
 					.setData(upUser)
 					.setMessage("User_deleted attribute updated and account will be deleted after 30 days if not used"));
-		}).orElseThrow(()-> new UserNotFoundException("User with the Specified ID is not found"));
+		}).orElseThrow(()-> new UserNotFoundByIdException("User with the Specified ID is not found"));
 	}
 	
 	private User updateRegistration(User user){
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findById(userId).map(user->
 					ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
 							.setMessage("User found success").setData(mapToUserResponse(user))))
-				.orElseThrow(()-> new UserNotFoundException("User with the Specified ID is not found"));
+				.orElseThrow(()-> new UserNotFoundByIdException("User with the Specified ID is not found"));
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 			return ResponseEntity.ok(structure.setStatusCode(HttpStatus.OK.value())
 					.setData(upResUser)
 					.setMessage("User_deleted attribute updated to false"));
-		}).orElseThrow(()-> new UserNotFoundException("User with the Specified ID is not found"));
+		}).orElseThrow(()-> new UserNotFoundByIdException("User with the Specified ID is not found"));
 	}
 	
 }

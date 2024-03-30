@@ -23,7 +23,7 @@ public class BlogController {
 	
 	@PostMapping("/users/{userId}/blogs")
 	public ResponseEntity<ResponseStructure<BlogResponse>> saveBlog(@PathVariable int userId,@RequestBody BlogRequest blogreq) {
-		return blogService.saveBlog(userId, blogreq);
+		return blogService.createBlog(userId, blogreq);
 	}
 	
 	@GetMapping("titles/{title}/blogs")

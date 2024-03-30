@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @SuppressWarnings("serial")
 @AllArgsConstructor @Getter
-public class InvalidBlogIdException extends RuntimeException {
+public class PanelNotFoundByIdException extends RuntimeException{
 
 	private String message;
 }

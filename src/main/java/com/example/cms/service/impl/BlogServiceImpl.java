@@ -5,11 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.cms.exceptions.TopicNotSpecifiedException;
-import com.example.cms.exceptions.InvalidBlogIdException;
+import com.example.cms.exceptions.BlogNotFoundByIdException;
 import com.example.cms.exceptions.TitleNotAvailableException;
-import com.example.cms.exceptions.UserNotFoundException;
+import com.example.cms.exceptions.UserNotFoundByIdException;
 import com.example.cms.model.Blog;
+import com.example.cms.model.ContributionPanel;
 import com.example.cms.repository.BlogRepository;
+import com.example.cms.repository.ContributionPanelRepository;
 import com.example.cms.repository.UserRepository;
 import com.example.cms.requestdto.BlogRequest;
 import com.example.cms.responsedto.BlogResponse;
@@ -26,21 +28,25 @@ public class BlogServiceImpl implements BlogService{
 	
 	private UserRepository userRepo;
 	
+	private ContributionPanelRepository panelRepo;
+	
 	ResponseStructure<BlogResponse> responseStructure;
 	
 	@Override
-	public ResponseEntity<ResponseStructure<BlogResponse>> saveBlog(int userId, BlogRequest blogreq) {
+	public ResponseEntity<ResponseStructure<BlogResponse>> createBlog(int userId, BlogRequest blogreq) {
 		return userRepo.findById(userId).map(user -> {
 			if(blogRepo.existsByTitle(blogreq.getTitle())) throw new TitleNotAvailableException("Failed to create blog");
 			if(blogreq.getTopics().length<1) throw new TopicNotSpecifiedException("Failed to create blog");
 			Blog blog=mapToBlog(blogreq, new Blog());
-			blog.getUsers().add(user);
-			Blog uniqueBlog = blogRepo.save(blog);
+			blog.setUser(user);
+			ContributionPanel panel = panelRepo.save(new ContributionPanel());
+			blog.setContributionPanel(panel);
+			Blog uniqueBlog = blogRepo.save(blog);	
 			return ResponseEntity.ok(responseStructure
 										.setStatusCode(HttpStatus.OK.value())
 										.setMessage("Blog saved successfully")
 										.setData(mapToBlogResponse(uniqueBlog)));
-		}).orElseThrow(() -> new UserNotFoundException("Failed to create blog"));
+		}).orElseThrow(() -> new UserNotFoundByIdException("Failed to create blog"));
 	}
 
 	public Blog mapToBlog(BlogRequest blogreq,Blog blog) {
@@ -69,7 +75,7 @@ public class BlogServiceImpl implements BlogService{
 			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
 											.setMessage("blog found succesfully")
 											.setData(mapToBlogResponse(blog)));
-		}).orElseThrow(()->new InvalidBlogIdException("failed to fetch the blog"));
+		}).orElseThrow(()->new BlogNotFoundByIdException("failed to fetch the blog"));
 	}
 
 	@Override
@@ -77,10 +83,11 @@ public class BlogServiceImpl implements BlogService{
 		return blogRepo.findById(blogId).map(blog->{
 			if(blogRepo.existsByTitle(blogreq.getTitle())) throw new TitleNotAvailableException("Failed to create blog");
 			if(blogreq.getTopics().length<1) throw new TopicNotSpecifiedException("Failed to create blog");
+			
 			Blog uniqueUpdatedBlog = blogRepo.save(mapToBlog(blogreq, blog));
 			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
 					.setMessage("blog updated succesfully")
 					.setData(mapToBlogResponse(uniqueUpdatedBlog)));
-		}).orElseThrow(()->new InvalidBlogIdException("failed to fetch the blog"));
+		}).orElseThrow(()->new BlogNotFoundByIdException("failed to fetch the blog"));
 	}
 }

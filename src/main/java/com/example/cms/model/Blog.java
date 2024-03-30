@@ -1,8 +1,6 @@
 package com.example.cms.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,7 +13,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,8 +35,10 @@ public class Blog {
 	private String title;
 	private String[] topics;
 	private String summary;
-	@ManyToMany @JsonIgnore
-	private List<User> users=new ArrayList<>();;
+	@ManyToOne @JsonIgnore
+	private User user;
+	@OneToOne
+	private ContributionPanel contributionPanel;
 	
 	@CreatedDate @Column(updatable = false)
 	private LocalDateTime createdAt;
