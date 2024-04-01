@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.example.cms.model.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +20,7 @@ public class BlogResponse {
 	private String title;
 	private String[] topics;
 	private String summary;
+	private User user;
 	
 	@CreatedDate
 	private LocalDateTime createdAt;
