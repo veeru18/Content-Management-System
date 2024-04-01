@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.cms.exceptions.TopicNotSpecifiedException;
-import com.example.cms.exceptions.BlogNotFoundByIdException;
+import com.example.cms.exceptions.BlogNotFoundException;
 import com.example.cms.exceptions.TitleNotAvailableException;
-import com.example.cms.exceptions.UserNotFoundByIdException;
+import com.example.cms.exceptions.UserNotFoundException;
 import com.example.cms.model.Blog;
 import com.example.cms.model.ContributionPanel;
 import com.example.cms.repository.BlogRepository;
@@ -46,7 +46,7 @@ public class BlogServiceImpl implements BlogService{
 										.setStatusCode(HttpStatus.OK.value())
 										.setMessage("Blog saved successfully")
 										.setData(mapToBlogResponse(uniqueBlog)));
-		}).orElseThrow(() -> new UserNotFoundByIdException("Failed to create blog"));
+		}).orElseThrow(() -> new UserNotFoundException("Failed to create blog"));
 	}
 
 	public Blog mapToBlog(BlogRequest blogreq,Blog blog) {
@@ -75,7 +75,7 @@ public class BlogServiceImpl implements BlogService{
 			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
 											.setMessage("blog found succesfully")
 											.setData(mapToBlogResponse(blog)));
-		}).orElseThrow(()->new BlogNotFoundByIdException("failed to fetch the blog"));
+		}).orElseThrow(()->new BlogNotFoundException("failed to fetch the blog"));
 	}
 
 	@Override
@@ -88,6 +88,6 @@ public class BlogServiceImpl implements BlogService{
 			return ResponseEntity.ok(responseStructure.setStatusCode(HttpStatus.OK.value())
 					.setMessage("blog updated succesfully")
 					.setData(mapToBlogResponse(uniqueUpdatedBlog)));
-		}).orElseThrow(()->new BlogNotFoundByIdException("failed to fetch the blog"));
+		}).orElseThrow(()->new BlogNotFoundException("failed to fetch the blog"));
 	}
 }

@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.example.cms.exceptions.PanelNotFoundByIdException;
+import com.example.cms.exceptions.PanelNotFoundException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
-import com.example.cms.exceptions.UserNotFoundByIdException;
+import com.example.cms.exceptions.UserNotFoundException;
 import com.example.cms.model.ContributionPanel;
 import com.example.cms.repository.BlogRepository;
 import com.example.cms.repository.ContributionPanelRepository;
@@ -48,8 +48,8 @@ public class ContributionPanelServiceImpl implements ContributionPanelSevice{
 					return ResponseEntity.ok(struct.setStatusCode(HttpStatus.OK.value())
 												.setMessage("Contributor added successfully")
 												.setData(uniquePanel));
-				}).orElseThrow(()->new UserNotFoundByIdException("User Not found in the database, please register first"));
-			}).orElseThrow(()->new PanelNotFoundByIdException("Panel Not found in db, create a blog first"));
+				}).orElseThrow(()->new UserNotFoundException("User Not found in the database, please register first"));
+			}).orElseThrow(()->new PanelNotFoundException("Panel Not found in db, create a blog first"));
 		}).get();// since the "/login" already validates the owner no need to check and throw
 		//thus get() is used to finish optional chaining to obtain the responseEntity.ok();
 	}
@@ -74,8 +74,8 @@ public class ContributionPanelServiceImpl implements ContributionPanelSevice{
 					return ResponseEntity.ok(struct.setStatusCode(HttpStatus.OK.value())
 												.setMessage("Contributor deleted successfully")
 												.setData(uniquePanel));
-				}).orElseThrow(()->new UserNotFoundByIdException("User Not found in the database, please register first"));
-			}).orElseThrow(()->new PanelNotFoundByIdException("Panel Not found in db, create a blog first"));
+				}).orElseThrow(()->new UserNotFoundException("User Not found in the database, please register first"));
+			}).orElseThrow(()->new PanelNotFoundException("Panel Not found in db, create a blog first"));
 		}).get();
 	}
 	

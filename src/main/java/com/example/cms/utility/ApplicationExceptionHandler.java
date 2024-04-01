@@ -16,11 +16,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.example.cms.exceptions.TopicNotSpecifiedException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
-import com.example.cms.exceptions.BlogNotFoundByIdException;
-import com.example.cms.exceptions.PanelNotFoundByIdException;
+import com.example.cms.exceptions.BlogNotFoundException;
+import com.example.cms.exceptions.BlogPostNotFoundException;
+import com.example.cms.exceptions.PanelNotFoundException;
 import com.example.cms.exceptions.TitleNotAvailableException;
 import com.example.cms.exceptions.UserEmailAlreadyExistsException;
-import com.example.cms.exceptions.UserNotFoundByIdException;
+import com.example.cms.exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -59,7 +60,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	}
 	
 	@ExceptionHandler
-	public ResponseEntity<ErrorStructure<String>> handleUserNotFoundByIdException(UserNotFoundByIdException usex){
+	public ResponseEntity<ErrorStructure<String>> handleUserNotFoundException(UserNotFoundException usex){
 		return errorResponse(HttpStatus.BAD_REQUEST,usex.getMessage(),"User not found, please check the database");
 	}
 	
@@ -74,12 +75,12 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	}
 	
 	@ExceptionHandler
-	public ResponseEntity<ErrorStructure<String>> handleBlogNotFoundByIdException(BlogNotFoundByIdException ibex){
-		return errorResponse(HttpStatus.NOT_FOUND,ibex.getMessage(),"Blog doesn't exist of specified ID, enter a valid id");
+	public ResponseEntity<ErrorStructure<String>> handleBlogNotFoundException(BlogNotFoundException blogex){
+		return errorResponse(HttpStatus.NOT_FOUND,blogex.getMessage(),"Blog doesn't exist of specified ID, enter a valid id");
 	}
 	
 	@ExceptionHandler
-	public ResponseEntity<ErrorStructure<String>> handlePanelNotFoundByIdException(PanelNotFoundByIdException pex){
+	public ResponseEntity<ErrorStructure<String>> handlePanelNotFoundException(PanelNotFoundException pex){
 		return errorResponse(HttpStatus.BAD_REQUEST,pex.getMessage(),"Panel not found, please check the database");
 	}
 	
@@ -91,5 +92,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler
 	public ResponseEntity<ErrorStructure<String>> handleIllegalArgumentException(IllegalArgumentException illegalArgEx){
 		return errorResponse(HttpStatus.UNAUTHORIZED,illegalArgEx.getMessage(),"Owner and Contributor cannnot be same! please add different user");
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handleBlogPostNotFoundException(BlogPostNotFoundException blogpostex){
+		return errorResponse(HttpStatus.NOT_FOUND,blogpostex.getMessage(),"Blog doesn't exist of specified ID, enter a valid id");
 	}
 }
