@@ -10,8 +10,9 @@ import com.example.cms.exceptions.BlogNotFoundException;
 import com.example.cms.exceptions.BlogPostNotFoundException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
 import com.example.cms.exceptions.UserNotFoundException;
-import com.example.cms.model.Blog;
 import com.example.cms.model.BlogPost;
+import com.example.cms.model.ContributionPanel;
+import com.example.cms.model.User;
 import com.example.cms.repository.BlogPostRepository;
 import com.example.cms.repository.BlogRepository;
 import com.example.cms.repository.ContributionPanelRepository;
@@ -40,9 +41,12 @@ public class BlogPostServiceImpl implements BlogPostService{
 		return userRepo.findByEmail(email).map(user->{
 			return blogRepo.findById(blogId).map(blog->{
 				BlogPost post=new BlogPost();
-				post.setBlog(blog);
+				post.setBlog(blog); User existUser=blog.getUser();
 				post.setPostType(PostType.DRAFT);
-				if(!blog.getUser().getEmail().equals(email)&& !panelRepo.existsByPanelIdAndContributors(blog.getContributionPanel().getPanelId(),user)) {
+				ContributionPanel panel = blog.getContributionPanel();
+				System.out.println(panel);
+				if(!existUser.getEmail().equals(email)&& !panelRepo.existsByPanelIdAndContributors(panel.getPanelId(),user)) {
+					//this for logical OR of that condition above
 					//				return panelRepo.findById(blog.getContributionPanel().getPanelId()).map(panel->{
 					//				List<User> contributors = panel.getContributors(); 
 					//				int flag=0;
@@ -54,13 +58,17 @@ public class BlogPostServiceImpl implements BlogPostService{
 					//					if(!panel.getContributors().stream().anyMatch(user->user.getEmail()==email)) 
 					//						throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
 
+					//this for logical AND of that condition above
+					throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
+
+					//				}).orElseThrow(()->new PanelNotFoundByIdException("panel Not found"));
+				}
+				else {
 					BlogPost uniqueBlogPost = postsRepo.save(mapToBlogPost(breq, post));
 					return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
 							.setMessage("BlogPost has been successfully drafted..")
 							.setData(mapToBlogPostResponse(uniqueBlogPost)));
-					//				}).orElseThrow(()->new PanelNotFoundByIdException("panel Not found"));
 				}
-				else throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
 			}).orElseThrow(()->new BlogNotFoundException("cannot add blogpost to get drafted"));
 		}).orElseThrow(()->new UserNotFoundException("cannot create post,user not found by email! please register"));
 	}
@@ -86,20 +94,34 @@ public class BlogPostServiceImpl implements BlogPostService{
 	@Override
 	public ResponseEntity<ResponseStructure<BlogPostResponse>> updateBlogPost(int blogPostId,BlogPostRequest breq) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		return userRepo.findByEmail(email).map(user->{
-			return postsRepo.findById(blogPostId).map(post->{
-				Blog blog=post.getBlog();
-				if(!blog.getUser().getEmail().equals(email)&& !panelRepo.existsByPanelIdAndContributors(blog.getContributionPanel().getPanelId(),user)) 
-					throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
-				//			return panelRepo.findById(blog.getContributionPanel().getPanelId()).map(panel->{
-				//
-				//				if(!panel.getContributors().stream().anyMatch(user->user.getEmail().equals(email))) 
-				//					throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
-				BlogPost uniqueBlogPost = postsRepo.save(mapToBlogPost(breq, post));
-				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
-						.setMessage("BlogPost has been successfully updated in drafts..")
-						.setData(mapToBlogPostResponse(uniqueBlogPost)));
-			}).orElseThrow(()->new BlogPostNotFoundException("cannot add blogpost to get drafted"));
-		}).orElseThrow(()->new UserNotFoundException("user not found by email! please register"));
+		return postsRepo.findById(blogPostId).map(post->{
+			if(!email.equals(post.getCreatedBy())) 
+				throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
+			//			return panelRepo.findById(blog.getContributionPanel().getPanelId()).map(panel->{
+			//
+			//				if(!panel.getContributors().stream().anyMatch(user->user.getEmail().equals(email))) 
+			//					throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
+			BlogPost uniqueBlogPost = postsRepo.save(mapToBlogPost(breq, post));
+			return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
+					.setMessage("BlogPost has been successfully updated in drafts..")
+					.setData(mapToBlogPostResponse(uniqueBlogPost)));
+		}).orElseThrow(()->new BlogPostNotFoundException("cannot add blogpost to get drafted"));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<BlogPostResponse>> deleteBlogPost(int blogPostId) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postsRepo.findById(blogPostId).map(post->{
+			if(!email.equals(post.getCreatedBy())) 
+				throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
+			//			return panelRepo.findById(blog.getContributionPanel().getPanelId()).map(panel->{
+			//
+			//				if(!panel.getContributors().stream().anyMatch(user->user.getEmail().equals(email))) 
+			//					throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
+			postsRepo.delete(post);
+			return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
+					.setMessage("BlogPost has been successfully updated in drafts..")
+					.setData(mapToBlogPostResponse(post)));
+		}).orElseThrow(()->new BlogPostNotFoundException("cannot add blogpost to get drafted"));
 	}
 }
