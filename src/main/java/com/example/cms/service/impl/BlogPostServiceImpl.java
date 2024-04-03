@@ -164,14 +164,11 @@ public class BlogPostServiceImpl implements BlogPostService{
 	
 	@Override
 	public ResponseEntity<ResponseStructure<BlogPostResponse>> fetchBlogPostIfPublished(int blogPostId) {
-		return postsRepo.findById(blogPostId).map(post->{
-			if(post.getPublish()==null ||post.getPostType()!=PostType.PUBLISHED)
-				throw new PostNotPublishedException("cannot fetch the blogpost");
-			else
+		return postsRepo.findByBlogPostIdAndPostType(blogPostId,PostType.PUBLISHED).map(post->{
 				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
 						.setMessage("blog post fetch successful")
 						.setData(mapToBlogPostResponse(post)));
-		}).orElseThrow(()->new BlogPostNotFoundException("can't find the post mentioned by Id"));
+		}).orElseThrow(()->new BlogPostNotFoundException("can't find the post mentioned by Id is not published"));
 	}
 
 }
