@@ -19,6 +19,7 @@ import com.example.cms.exceptions.IllegalAccessRequestException;
 import com.example.cms.exceptions.BlogNotFoundException;
 import com.example.cms.exceptions.BlogPostNotFoundException;
 import com.example.cms.exceptions.PanelNotFoundException;
+import com.example.cms.exceptions.PostNotPublishedException;
 import com.example.cms.exceptions.TitleNotAvailableException;
 import com.example.cms.exceptions.UserEmailAlreadyExistsException;
 import com.example.cms.exceptions.UserNotFoundException;
@@ -98,4 +99,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	public ResponseEntity<ErrorStructure<String>> handleBlogPostNotFoundException(BlogPostNotFoundException blogpostex){
 		return errorResponse(HttpStatus.NOT_FOUND,blogpostex.getMessage(),"Blog doesn't exist of specified ID, enter a valid id");
 	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ErrorStructure<String>> handlePostNotPublishedException(PostNotPublishedException postpubexcept){
+		return errorResponse(HttpStatus.NOT_FOUND,postpubexcept.getMessage(),"Blogpost doesn't exist of specified ID, since it isn't published");
+	}
+	
 }

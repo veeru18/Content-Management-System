@@ -3,7 +3,6 @@ package com.example.cms.responsedto;
 import java.time.LocalDateTime;
 
 import com.example.cms.enums.PostType;
-import com.example.cms.model.Blog;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +20,7 @@ public class BlogPostResponse {
 	private String subTitle;
 	private String summary;
 	private PostType postType;
-	private Blog blog;
+	private PublishResponse publishResponse;
 	
 	private String createdBy;
 	private LocalDateTime createdAt;

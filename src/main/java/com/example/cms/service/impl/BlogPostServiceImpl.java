@@ -9,6 +9,7 @@ import com.example.cms.enums.PostType;
 import com.example.cms.exceptions.BlogNotFoundException;
 import com.example.cms.exceptions.BlogPostNotFoundException;
 import com.example.cms.exceptions.IllegalAccessRequestException;
+import com.example.cms.exceptions.PostNotPublishedException;
 import com.example.cms.exceptions.UserNotFoundException;
 import com.example.cms.model.BlogPost;
 import com.example.cms.model.ContributionPanel;
@@ -87,7 +88,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 				.createdAt(post.getCreatedAt()).createdBy(post.getCreatedBy())
 				.lastModifiedAt(post.getLastModifiedAt())
 				.lastModifiedBy(post.getLastModifiedBy())
-				.blog(post.getBlog())
+				.publishResponse(PublishServiceImpl.mapToPublishResponse(post.getPublish()))
 				.build();
 	}
 
@@ -112,7 +113,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 	public ResponseEntity<ResponseStructure<BlogPostResponse>> deleteBlogPost(int blogPostId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return postsRepo.findById(blogPostId).map(post->{
-			if(!email.equals(post.getCreatedBy())) 
+			if(!post.getBlog().getUser().getEmail().equals(email)&&!email.equals(post.getCreatedBy())) 
 				throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
 			//			return panelRepo.findById(blog.getContributionPanel().getPanelId()).map(panel->{
 			//
@@ -124,4 +125,53 @@ public class BlogPostServiceImpl implements BlogPostService{
 					.setData(mapToBlogPostResponse(post)));
 		}).orElseThrow(()->new BlogPostNotFoundException("cannot add blogpost to get drafted"));
 	}
+
+	public ResponseEntity<ResponseStructure<BlogPostResponse>> unpublishPost(int postId){
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postsRepo.findById(postId).map(post->{
+			if(!post.getCreatedBy().equals(email)&&!post.getBlog().getUser().getEmail().equals(email))
+				throw new IllegalAccessRequestException("user entered is neither owner nor creator of this post");
+			if(post.getPostType()==PostType.PUBLISHED) {
+				post.setPostType(PostType.DRAFT);
+				BlogPost uniquePost = postsRepo.save(post);
+				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
+						.setMessage("blog post published has been drafted")
+						.setData(mapToBlogPostResponse(uniquePost))); 
+			}else {
+				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
+						.setMessage("blog post published has already been been drafted")
+						.setData(mapToBlogPostResponse(post)));
+			}
+		}).orElseThrow(()->new BlogPostNotFoundException("can't find the post mentioned by Id"));
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<BlogPostResponse>> fetchBlogPost(int blogPostId) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		return postsRepo.findById(blogPostId).map(post->{
+			ContributionPanel panel = post.getBlog().getContributionPanel();
+			return userRepo.findByEmail(email).map(user->{
+				if(!post.getCreatedBy().equals(email)
+						&&!post.getBlog().getUser().getEmail().equals(email)
+						&&!panelRepo.existsByPanelIdAndContributors(panel.getPanelId(),user))
+					throw new IllegalAccessRequestException("user entered is neither owner nor creator of this post");
+				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
+						.setMessage("blog post published has already been been drafted")
+						.setData(mapToBlogPostResponse(post)));
+			}).orElseThrow(()->new UserNotFoundException("can't find the user"));
+		}).orElseThrow(()->new BlogPostNotFoundException("can't find the post mentioned by Id"));
+	}
+	
+	@Override
+	public ResponseEntity<ResponseStructure<BlogPostResponse>> fetchBlogPostIfPublished(int blogPostId) {
+		return postsRepo.findById(blogPostId).map(post->{
+			if(post.getPublish()==null ||post.getPostType()!=PostType.PUBLISHED)
+				throw new PostNotPublishedException("cannot fetch the blogpost");
+			else
+				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
+						.setMessage("blog post fetch successful")
+						.setData(mapToBlogPostResponse(post)));
+		}).orElseThrow(()->new BlogPostNotFoundException("can't find the post mentioned by Id"));
+	}
+
 }
