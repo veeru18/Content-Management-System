@@ -168,7 +168,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 				return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
 						.setMessage("blog post fetch successful")
 						.setData(mapToBlogPostResponse(post)));
-		}).orElseThrow(()->new BlogPostNotFoundException("can't find the post mentioned by Id is not published"));
+		}).orElseThrow(()->new PostNotPublishedException("can't find the post mentioned by Id is not published"));
 	}
 
 }
