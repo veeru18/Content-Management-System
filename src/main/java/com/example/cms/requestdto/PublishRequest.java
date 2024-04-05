@@ -17,4 +17,5 @@ public class PublishRequest {
 	private String seoDescription;
 	@NotBlank(message = "don't leave tags as blank field")
 	private String[] seoTags;
+	private ScheduleRequest schedule;
 }

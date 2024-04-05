@@ -32,6 +32,8 @@ public class Publish {
 	private String[] seoTags;
 	@OneToOne
 	private BlogPost blogPost;
+	@OneToOne
+	private Schedule schedule;
 	
 	@CreatedDate
 	private LocalDateTime createdAt;

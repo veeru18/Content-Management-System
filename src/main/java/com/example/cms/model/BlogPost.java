@@ -3,9 +3,7 @@ package com.example.cms.model;
 import java.time.LocalDateTime;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -39,16 +37,15 @@ public class BlogPost {
 	private PostType postType;
 	@ManyToOne
 	private Blog blog;
-	@OneToOne @JsonIgnore
+	@OneToOne(mappedBy = "blogPost")
+	@JsonIgnore
 	private Publish publish;
 	
-	@CreatedBy
 	private String createdBy;
 	@CreatedDate @Column(updatable = false)
 	private LocalDateTime createdAt;
 	@LastModifiedDate
 	private LocalDateTime lastModifiedAt;
-	@LastModifiedBy
 	private String lastModifiedBy;
 }
 

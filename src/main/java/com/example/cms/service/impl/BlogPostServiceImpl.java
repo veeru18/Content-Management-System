@@ -44,6 +44,8 @@ public class BlogPostServiceImpl implements BlogPostService{
 				BlogPost post=new BlogPost();
 				post.setBlog(blog); User existUser=blog.getUser();
 				post.setPostType(PostType.DRAFT);
+				post.setCreatedBy(email);
+				post.setLastModifiedBy(email);
 				ContributionPanel panel = blog.getContributionPanel();
 				System.out.println(panel);
 				if(!existUser.getEmail().equals(email)&& !panelRepo.existsByPanelIdAndContributors(panel.getPanelId(),user)) {
@@ -102,6 +104,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 			//
 			//				if(!panel.getContributors().stream().anyMatch(user->user.getEmail().equals(email))) 
 			//					throw new IllegalAccessRequestException("cannot access the blog, since neither he is owner nor he is contributor");
+			post.setLastModifiedBy(email);
 			BlogPost uniqueBlogPost = postsRepo.save(mapToBlogPost(breq, post));
 			return ResponseEntity.ok(respStructure.setStatusCode(HttpStatus.OK.value())
 					.setMessage("BlogPost has been successfully updated in drafts..")
@@ -170,5 +173,5 @@ public class BlogPostServiceImpl implements BlogPostService{
 						.setData(mapToBlogPostResponse(post)));
 		}).orElseThrow(()->new PostNotPublishedException("can't find the post mentioned by Id is not published"));
 	}
-
+	
 }

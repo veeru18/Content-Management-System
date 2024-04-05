@@ -6,4 +6,6 @@ import com.example.cms.model.Publish;
 
 public interface PublishRepository extends JpaRepository<Publish, Integer> {
 
+//	@Query("from Publish p where p.schedule.dateTime=:dateTime")
+//	List<Publish> findAllByScheduleDateTimeLessThanEqual(LocalDateTime dateTime);
 }

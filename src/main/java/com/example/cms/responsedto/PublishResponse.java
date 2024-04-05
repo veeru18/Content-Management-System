@@ -2,6 +2,8 @@ package com.example.cms.responsedto;
 
 import java.time.LocalDateTime;
 
+import com.example.cms.model.Schedule;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +19,5 @@ public class PublishResponse {
 	private String seoDescription;
 	private String[] seoTags;
 	private LocalDateTime createdAt;
-	
+	private Schedule schedule;
 }
